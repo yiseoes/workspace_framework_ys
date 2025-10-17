@@ -14,7 +14,7 @@ import spring.service.dice.play.Player02;
  */
 public class DiceTestAppUseSpring {
 	
-	///Main Method
+	///Main Method  
 	public static void main(String[] args){
 		
 		//1. BeanFactory( Bean/IoC Container)을 이용 Meta-Data 에 선언적,서술적 으로 선언된 
