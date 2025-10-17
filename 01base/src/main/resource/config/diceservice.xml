@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- ===================================================================
+         Dice 구현체 등록
+         - Spring Framework 5.2.5 기준 일반 빈 정의
+         - class 경로는 실제 프로젝트 패키지에 맞게 수정
+       =================================================================== -->
+    <bean id="diceA" class="spring.service.dice.impl.DiceAImpl"/>
+    <bean id="diceB" class="spring.service.dice.impl.DiceBImpl"/>
+    <bean id="diceC" class="spring.service.dice.impl.DiceCImpl"/>
+
+    <!-- ===================================================================
+         Player02 빈 정의
+         요구사항:
+           - Player02 생성 시 DiceAImpl 인스턴스 '세터 인젝션'
+           - Player02 생성 시 DiceBImpl 인스턴스 '컨스트럭터 인젝션'
+         구현:
+           - 두 개의 Player02 빈을 분리해 명확히 구성
+       =================================================================== -->
+
+    <!-- 세터 인젝션: setDice(Dice) 호출 -->
+    <bean id="player02Setter" class="spring.service.dice.play.Player02">
+        <property name="dice" ref="diceA"/>
+    </bean>
+
+    <!-- 컨스트럭터 인젝션: Player02(Dice dice) 생성자 -->
+    <bean id="player02Ctor" class="spring.service.dice.play.Player02">
+        <constructor-arg ref="diceB"/>
+    </bean>
+
+</beans>

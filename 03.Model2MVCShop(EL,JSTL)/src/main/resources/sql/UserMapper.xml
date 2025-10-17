@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper">
+
+  <resultMap id="userSelectMap" type="user">
+    <result property="userId"   column="USER_ID"    jdbcType="VARCHAR"/>
+    <result property="userName" column="USER_NAME"  jdbcType="VARCHAR"/>
+    <result property="password" column="PASSWORD"   jdbcType="VARCHAR"/>
+    <result property="role"     column="ROLE"       jdbcType="VARCHAR"/>
+    <result property="ssn"      column="SSN"        jdbcType="VARCHAR"/>
+    <result property="phone"    column="CELL_PHONE" jdbcType="VARCHAR"/>
+    <result property="addr"     column="ADDR"       jdbcType="VARCHAR"/>
+    <result property="email"    column="EMAIL"      jdbcType="VARCHAR"/>
+    <result property="regDate"  column="REG_DATE"   jdbcType="DATE"/>
+  </resultMap>
+  
+  <insert id="insertUser" parameterType="user">
+    INSERT 
+    INTO USERS ( user_id, user_name, password, role, ssn, cell_phone, addr, email, reg_date )
+    VALUES ( #{userId}, #{userName}, #{password}, 'user', 
+             #{ssn, jdbcType=VARCHAR}, #{phone, jdbcType=VARCHAR}, 
+             #{addr, jdbcType=VARCHAR}, #{email, jdbcType=VARCHAR}, SYSDATE )
+  </insert>
+  
+  <select id="findUser" parameterType="string" resultMap="userSelectMap">
+    SELECT user_id, user_name, password, role, cell_phone, addr, email, reg_date 
+    FROM users 
+    WHERE user_id = #{value}
+  </select>
+  
+  <update id="updateUser" parameterType="user">
+    UPDATE users
+    <set>
+      <if test="userName != null"> user_name = #{userName}, </if>
+      <if test="phone != null"> cell_phone = #{phone}, </if>
+      <if test="addr != null"> addr = #{addr}, </if>
+      <if test="email != null"> email = #{email}, </if>
+    </set>
+    WHERE user_id = #{userId}
+  </update>
+  
+	<select id="getUserList" parameterType="search" resultMap="userSelectMap">
+	    SELECT *
+	    FROM ( SELECT inner_table.*, ROWNUM AS row_seq
+	           FROM ( SELECT user_id, user_name, email, reg_date
+	                  FROM users
+	                  <where>
+	                    <if test="searchKeyword != null and searchKeyword != ''">
+	                      <choose>
+	                        <when test="searchCondition == '0'">
+	                          user_id LIKE '%' || #{searchKeyword} || '%'
+	                        </when>
+	                        <when test="searchCondition == '1'">
+	                          user_name LIKE '%' || #{searchKeyword} || '%'
+	                        </when>
+	                      </choose>
+	                    </if>
+	                  </where>
+	                  ORDER BY user_id
+	                ) inner_table
+	           WHERE ROWNUM &lt;= #{currentPage} * #{pageSize} )
+	    WHERE row_seq BETWEEN (#{currentPage}-1) * #{pageSize} + 1 AND #{currentPage} * #{pageSize}
+	</select>
+
+
+	<select id="getTotalCount" parameterType="search" resultType="int">
+	  SELECT COUNT(*)
+	  FROM users
+	  <where>
+	    <if test="searchKeyword != null and searchKeyword != ''">
+	      <choose>
+	        <when test="searchCondition == '0'">
+	          user_id LIKE '%' || #{searchKeyword} || '%'
+	        </when>
+	        <when test="searchCondition == '1'">
+	          user_name LIKE '%' || #{searchKeyword} || '%'
+	        </when>
+	      </choose>
+	    </if>
+	  </where>
+	</select>
+  
+</mapper>

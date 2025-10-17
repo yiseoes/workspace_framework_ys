@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+
+<html lang="ko">
+	
+<head>
+	<meta charset="UTF-8">
+	
+	<script src="../javascript/jquery-2.1.4.js"	type="text/javascript"></script>
+	<script type="text/javascript">
+	
+		$(function(){
+			
+			$("td").click(function(){			
+				$(this).hide();
+			})
+			
+			$("td:last").click(function(){
+				self.location = "03jQueryFramework.html";
+				//self.location = "02onlyJavaScript.html";
+				//self.location = "01onlyJavaScript.html";
+			
+			})
+			
+		})		
+
+	</script>		
+	
+</head>
+
+<body>
+	
+	<table>
+		<tr>
+			<td>1. 글릭해 보세요.</td>
+		</tr>
+		
+		<tr>
+			<td>2. 글릭해 보세요.</td>
+		</tr>
+		
+		<tr>
+			<td>3. 글릭해 보세요.</td>
+		</tr>
+		<tr>
+			<td>초기화면 :: 다시 Request.... </td>
+		</tr>
+	</table>
+
+</body>
+	
+</html>

@@ -1,0 +1,49 @@
+/* ===== Buttons (유저모듈 톤 매칭) ===== */
+.btn{display:inline-block;padding:8px 14px;border-radius:10px;border:1px solid #dfe6e9;text-decoration:none;line-height:1}
+.btn-add{background:#2ecc71;color:#fff;border-color:#27ae60}
+.btn-view{background:#3498db;color:#fff;border-color:#2980b9}
+.btn-edit{background:#f39c12;color:#fff;border-color:#d68910}
+.btn-del{background:#e74c3c;color:#fff;border-color:#c0392b}
+
+/* ===== Badges ===== */
+.badge{padding:2px 8px;border-radius:999px;font-size:12px}
+.badge-sale{background:#ecf0f1;color:#2c3e50}      /* 판매중 */
+.badge-sold{background:#fde2e2;color:#c0392b}      /* 판매완료 */
+
+/* ===== Zebra table + hover ===== */
+.table-zebra tbody tr:nth-child(odd){background:#f8fbff}
+.table-zebra tbody tr:nth-child(even){background:#ffffff}
+.table-zebra tbody tr:hover{background:#fffbe6}
+.table-zebra tbody tr.odd{background:#f8fbff}
+.table-zebra tbody tr.even{background:#ffffff}
+
+/* ===== 카드형 리스트일 때 ===== */
+ul.product-list>li:nth-child(odd){background:#f8fbff}
+ul.product-list>li:nth-child(even){background:#ffffff}
+ul.product-list>li:hover{background:#fffbe6}
+
+/* ===== 이미지 미리보기 ===== */
+.img-preview{max-width:220px;border:1px solid #eee;border-radius:8px;padding:6px}
+
+
+/* 줄무늬 테스트용 스타일 */
+.row-alt {
+  background-color: #ffddee !important; /* 눈에 확 띄는 핑크색으로 변경! */
+}
+
+/* ===== Toast ===== */
+.toast{
+  position:fixed;left:50%;bottom:28px;transform:translateX(-50%);
+  background:rgba(40,40,40,.92);color:#fff;padding:10px 14px;border-radius:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:9999;opacity:0;pointer-events:none;
+  transition:opacity .25s, bottom .25s;
+}
+.toast.show{opacity:1;bottom:38px}
+
+/* ===== Back to top ===== */
+#backToTop{
+  position:fixed;right:18px;bottom:18px;width:42px;height:42px;border-radius:50%;
+  border:none;background:#2ecc71;color:#fff;cursor:pointer;display:none;
+  box-shadow:0 8px 22px rgba(0,0,0,.15)
+}
+#backToTop:hover{filter:brightness(0.95)}

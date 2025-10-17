@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- user01 : 디폴트 생성자 + 세터 인젝션 -->
+    <bean id="user01" class="spring.service.domain.User">
+        <property name="userId" value="user01"/>
+        <property name="password" value="pw01"/>
+        <property name="age" value="21"/>
+    </bean>
+
+    <!-- user02 : (age, userId) 생성자 인젝션 -->
+    <bean id="user02" class="spring.service.domain.User">
+        <constructor-arg index="0" value="22"/>
+        <constructor-arg index="1" value="user02"/>
+        <!-- password는 세터로 보강 -->
+        <property name="password" value="pw02"/>
+    </bean>
+
+    <!-- user03 : (age, password, userId) 생성자 인젝션 -->
+    <bean id="user03" class="spring.service.domain.User">
+        <constructor-arg index="0" value="23"/>
+        <constructor-arg index="1" value="pw03"/>
+        <constructor-arg index="2" value="user03"/>
+    </bean>
+
+    <!-- user04 : 세터 인젝션 -->
+    <bean id="user04" class="spring.service.domain.User">
+        <property name="age" value="24"/>
+        <property name="userId" value="user04"/>
+        <property name="password" value="pw04"/>
+    </bean>
+
+    <!-- user05 : 세터 인젝션 (App01, App02 둘 다 사용) -->
+    <bean id="user05" class="spring.service.domain.User">
+        <property name="userId" value="user05"/>
+        <property name="password" value="pw05"/>
+        <property name="age" value="25"/>
+    </bean>
+
+    <!-- user06 : 세터 인젝션 (App02에서 사용) -->
+    <bean id="user06" class="spring.service.domain.User">
+        <property name="userId" value="user06"/>
+        <property name="password" value="pw06"/>
+        <property name="age" value="26"/>
+    </bean>
+
+    <!-- user07 : (age, userId) 생성자 + password 세터 (App02에서 사용) -->
+    <bean id="user07" class="spring.service.domain.User">
+        <constructor-arg index="0" value="27"/>
+        <constructor-arg index="1" value="user07"/>
+        <property name="password" value="pw07"/>
+    </bean>
+
+</beans>

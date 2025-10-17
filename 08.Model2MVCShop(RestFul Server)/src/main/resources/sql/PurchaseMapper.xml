@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PurchaseMapper">
+
+  <resultMap id="purchaseSelectMap" type="purchase">
+    <id     property="tranNo"         column="tran_no"          jdbcType="NUMERIC"/>
+    <result property="tranCode"       column="tran_status_code" jdbcType="VARCHAR"/>
+    <result property="paymentOption"  column="payment_option"   jdbcType="CHAR"/>
+    <result property="receiverName"   column="receiver_name"    jdbcType="VARCHAR"/>
+    <result property="receiverPhone"  column="receiver_phone"   jdbcType="VARCHAR"/>
+    <result property="dlvyAddr"       column="demailaddr"       jdbcType="VARCHAR"/>
+    <result property="dlvyRequest"    column="dlvy_request"     jdbcType="VARCHAR"/>
+    <result property="orderDate"      column="order_date"       jdbcType="DATE"/>
+    <result property="dlvyDate"       column="dlvy_date"        jdbcType="VARCHAR"/>
+
+    <association property="buyer" javaType="user">
+      <id     property="userId"   column="buyer_id"   jdbcType="VARCHAR"/>
+      <result property="userName" column="user_name"  jdbcType="VARCHAR"/>
+    </association>
+
+    <association property="purchaseProd" javaType="product">
+      <id     property="prodNo"      column="prod_no"       jdbcType="NUMERIC"/>
+      <result property="prodName"    column="prod_name"     jdbcType="VARCHAR"/>
+      <result property="price"       column="price"         jdbcType="NUMERIC"/>
+      <result property="imageFile"   column="image_file"    jdbcType="VARCHAR"/>
+    </association>
+  </resultMap>
+
+  <!-- INSERT : selectKey로 tranNo를 VO에 미리 채움 -->
+  <insert id="addPurchase" parameterType="purchase">
+    <selectKey keyProperty="tranNo" resultType="int" order="BEFORE">
+      SELECT seq_transaction_tran_no.NEXTVAL FROM dual
+    </selectKey>
+
+    INSERT INTO transaction
+    (
+      tran_no, prod_no, buyer_id, payment_option,
+      receiver_name, receiver_phone, demailaddr, dlvy_request,
+      tran_status_code, order_date, dlvy_date
+    )
+    VALUES
+    (
+      #{tranNo},
+      #{purchaseProd.prodNo},
+      #{buyer.userId},
+      #{paymentOption},
+      #{receiverName},
+      #{receiverPhone},
+      #{dlvyAddr},
+      #{dlvyRequest},
+      '1',
+      SYSDATE,
+      DECODE(#{dlvyDate}, NULL, NULL, TO_DATE(#{dlvyDate}, 'YYYYMMDD'))
+    )
+  </insert>
+
+  <select id="findPurchase" parameterType="int" resultMap="purchaseSelectMap">
+    SELECT
+      t.tran_no,
+      t.prod_no,
+      t.buyer_id,
+      t.payment_option,
+      t.receiver_name,
+      t.receiver_phone,
+      t.demailaddr,
+      t.dlvy_request,
+      TRIM(t.tran_status_code) AS tran_status_code,
+      t.order_date,
+      TO_CHAR(t.dlvy_date, 'YYYYMMDD') AS dlvy_date,
+      p.prod_name,
+      p.price,
+      p.image_file,
+      u.user_name
+    FROM transaction t, product p, users u
+    WHERE p.prod_no(+) = t.prod_no
+      AND u.user_id    = t.buyer_id
+      AND t.tran_no    = #{tranNo}
+  </select>
+
+  <select id="getTotalCount" parameterType="string" resultType="int">
+    SELECT COUNT(*)
+      FROM transaction t, product p, users u
+     WHERE p.prod_no(+) = t.prod_no
+       AND u.user_id    = t.buyer_id
+       AND t.buyer_id   = #{buyerId}
+  </select>
+
+  <select id="findPurchaseList" parameterType="map" resultMap="purchaseSelectMap">
+    <![CDATA[
+    SELECT *
+      FROM (
+        SELECT ROWNUM rnum, a.*
+          FROM (
+            SELECT
+              t.tran_no,
+              t.prod_no,
+              t.buyer_id,
+              t.payment_option,
+              t.receiver_name,
+              t.receiver_phone,
+              t.demailaddr,
+              t.dlvy_request,
+              TRIM(t.tran_status_code) AS tran_status_code,
+              t.order_date,
+              TO_CHAR(t.dlvy_date, 'YYYYMMDD') AS dlvy_date,
+              p.prod_name,
+              p.price,
+              p.image_file,
+              u.user_name
+            FROM transaction t, product p, users u
+           WHERE p.prod_no(+) = t.prod_no
+             AND u.user_id    = t.buyer_id
+             AND t.buyer_id   = #{buyerId}
+           ORDER BY t.tran_no DESC
+          ) a
+         WHERE ROWNUM <= #{endRowNum}
+      )
+     WHERE rnum >= #{startRowNum}
+    ]]>
+  </select>
+
+  <update id="updatePurchase" parameterType="purchase">
+    UPDATE transaction
+       SET payment_option = #{paymentOption},
+           receiver_name  = #{receiverName},
+           receiver_phone = #{receiverPhone},
+           demailaddr     = #{dlvyAddr},
+           dlvy_request   = #{dlvyRequest, jdbcType=VARCHAR},
+           dlvy_date      = DECODE(#{dlvyDate}, NULL, NULL, TO_DATE(#{dlvyDate}, 'YYYYMMDD'))
+     WHERE tran_no       = #{tranNo}
+  </update>
+
+  <update id="updateTranCode" parameterType="map">
+    UPDATE transaction
+       SET tran_status_code = #{code}
+     WHERE tran_no          = #{tranNo}
+  </update>
+
+  <update id="updateTranCodeByProd" parameterType="map">
+    UPDATE transaction
+       SET tran_status_code = #{code}
+     WHERE prod_no          = #{prodNo}
+  </update>
+
+</mapper>

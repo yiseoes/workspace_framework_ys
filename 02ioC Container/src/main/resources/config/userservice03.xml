@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 1) v3 전용 properties 로딩 -->
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="config/userservice03.properties"/>
+    </bean>
+
+    <!-- 2) SpEL을 이용한 User Bean 정의 -->
+    <!-- user08 : properties 그대로 참조 -->
+    <bean id="user08" class="spring.service.domain.User">
+        <property name="userId" value="#{'${user.userId}'}"/>
+        <property name="password" value="#{'${user.password}'}"/>
+        <property name="age" value="#{${user.age}}"/>
+    </bean>
+
+    <!-- user09 : SpEL로 값 가공 -->
+    <bean id="user09" class="spring.service.domain.User">
+        <property name="userId" value="#{'${user.userId}' + '_V3'}"/>
+        <property name="password" value="#{'${user.password}'.toUpperCase()}"/>
+        <property name="age" value="#{${user.age} + 1}"/>
+    </bean>
+
+    <!-- user11 : 순수 SpEL 계산 -->
+    <bean id="user11" class="spring.service.domain.User">
+        <property name="userId" value="'user11'"/>
+        <property name="password" value="'pw11'"/>
+        <property name="age" value="#{30 + 1}"/>
+    </bean>
+
+    <!-- user12 : SpEL 문자열 조합 -->
+    <bean id="user12" class="spring.service.domain.User">
+        <property name="userId" value="#{'user' + (10+2)}"/>
+        <property name="password" value="'pw12'"/>
+        <property name="age" value="32"/>
+    </bean>
+
+</beans>

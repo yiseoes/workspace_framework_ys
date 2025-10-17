@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+
+  <script src="../javascript/jquery-2.1.4.js" type="text/javascript"></script>
+  <style>.error{outline:2px solid #e74c3c}</style>
+
+  <script>
+  $(function(){
+
+    // ── 이름/주소만 분류·검증용(체크박스/라디오는 사용 안 함)
+    function classify(val){
+      if(val == null) return "입력값 없음";
+      var s = $.trim(val);
+      if(s === "") return "입력값 없음";
+      var hasNum   = /[0-9]/.test(s);
+      var hasAlpha = /[A-Za-z가-힣]/.test(s);
+      var hasEtc   = /[^0-9A-Za-z가-힣\s\-\.,#/]/.test(s);
+      if(hasNum && !hasAlpha && !hasEtc) return "숫자만";
+      if(!hasNum && hasAlpha && !hasEtc) return "문자만(영문/한글)";
+      if(hasNum && hasAlpha && !hasEtc)  return "문자+숫자(혼합)";
+      if(hasEtc && !(hasNum||hasAlpha))  return "기호만";
+      if(hasEtc)                         return "기호 포함(혼합)";
+      return "분류불가";
+    }
+
+    function validateForm(){
+      var $name = $('input:text[name="name"]');
+      var $addr = $('input:text[name="addr"]');
+      var $sw   = $('input:checkbox[name="sw"]');
+      var $os   = $('input:radio[name="os"]');
+      var $cpu  = $('input:radio[name="cpu"]');
+
+      $name.removeClass('error'); $addr.removeClass('error');
+
+      // 1) 이름: 문자+공백만
+      var nameVal = $.trim($name.val());
+      var nameOk = /^[A-Za-z가-힣\s]+$/.test(nameVal) && nameVal !== "";
+      if(!nameOk){ alert("이름은 '문자(영문/한글)+공백'만 허용!"); $name.addClass('error').focus(); return false; }
+
+      // 2) 주소: 문자+숫자 허용(숫자만 금지, 문자 1개 이상)
+      var addrVal = $.trim($addr.val());
+      var addrAllowed = /^[0-9A-Za-z가-힣\s\-\.,#/]+$/.test(addrVal) && addrVal !== "";
+      var addrHasLetter = /[A-Za-z가-힣]/.test(addrVal);
+      if(!(addrAllowed && addrHasLetter)){ alert("주소는 문자+숫자 조합, '숫자만'은 불가."); $addr.addClass('error').focus(); return false; }
+
+      // 3) 체크박스 sw: 최소 1개
+      if($sw.filter(':checked').length < 1){ alert("소프트웨어는 최소 1개 이상 선택해줘!"); $sw.first().focus(); return false; }
+
+      // 4) 라디오 os / cpu: 선택 유무만 확인
+      if($os.filter(':checked').length === 0){ alert("OS를 선택해줘!"); $os.first().focus(); return false; }
+      if($cpu.filter(':checked').length === 0){ alert("CPU를 선택해줘!"); $cpu.first().focus(); return false; }
+
+      return true;
+    }
+
+    function summarizeInputs(){
+      var lines = [];
+      $("input").each(function(i, el){
+        var $el  = $(el);
+        var type = ($el.attr("type")||"").toLowerCase();
+        var name = $el.attr("name")||"(name없음)";
+
+        if(type === "text"){
+          var raw = $el.val();
+          var temp = ($.trim(raw)==="" ? "입력값 없음" : raw);
+          var cls  = classify(raw); // 텍스트만 분류 표시
+          lines.push((i+1)+" : "+name+" : "+temp+"  ["+cls+"]");
+        }
+
+        if(type === "checkbox" && $el.is(":checked")){
+          // ✅ 분류 제거: 체크 여부만 보고 값만 출력
+          lines.push((i+1)+" : "+name+" : "+$el.val());
+        }
+
+        if(type === "radio" && $el.is(":checked")){
+          // ✅ 분류 제거
+          lines.push((i+1)+" : "+name+" : "+$el.val());
+        }
+      });
+      alert(lines.join("\n"));
+    }
+
+    // 커스텀 버튼
+    $('input:button').on('click', function(){
+      if(!validateForm()) return;
+      summarizeInputs();
+      $('form').attr('method','POST').attr('action','abc.do').submit();
+    });
+
+    // 기본 submit도 동일 검증 적용
+    $('form').on('submit', function(e){
+      if(!validateForm()){ e.preventDefault(); return false; }
+    });
+  });
+  </script>
+</head>
+<body>
+  <form name="myForm">
+    이름<input type='text' name='name' value='이름입력'><br>
+    주소<input type='text' name='addr'><br><p>
+
+    사용중인 소프트웨어 선택<br>
+    <input type='checkbox' name='sw' value='hwp' checked="checked">hwp<br>
+    <input type='checkbox' name='sw' value='MS/WORD' checked="checked">MS/WORD<br>
+    <input type='checkbox' name='sw' value='EXCEL'>EXCEL<br><p>
+
+    사용중인 OS 선택<br>
+    <input type='radio' name='os' value='win2000' checked="checked">win2000<br>
+    <input type='radio' name='os' value='linux'>리눅스<br><p>
+
+    사용중인 CPU 선택<br>
+    <input type='radio' name='cpu' value='i3'>i3<br>
+    <input type='radio' name='cpu' value='i5'>i5<br>
+    <input type='radio' name='cpu' value='i7' checked="checked">i7<br>
+
+    <input type="button"  value='button전송'>
+    <input type="submit" value="submit전송">
+    <input type='reset' value='취소'>
+  </form>
+</body>
+</html>

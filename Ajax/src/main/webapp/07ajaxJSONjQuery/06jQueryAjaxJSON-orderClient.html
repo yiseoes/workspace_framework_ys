@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>06jQueryAjaxJSON-orderClient</title>
+
+  <!-- jQuery 2.1.4 -->
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+  <style>
+    body { font-family: Arial, "맑은 고딕", sans-serif; margin: 24px; }
+    .row { margin-bottom: 12px; }
+    label { display:inline-block; width:80px; }
+    input[type="text"] { width: 240px; padding: 6px; }
+    textarea { width: 332px; height: 120px; padding: 8px; }
+    .btn { padding: 8px 14px; cursor: pointer; }
+  </style>
+
+  <script type="text/javascript">
+    $(function () {
+
+      // == 전송 버튼 클릭 ==
+      $("#btnSend").on("click", function (e) {
+        e.preventDefault(); // 폼 기본 제출 막기
+
+        // 1) 입력값 수집
+        var name  = $.trim($("#name").val());
+        var phone = $.trim($("#phone").val());
+
+        if (!name || !phone) {
+          alert("이름과 전화번호를 입력해줘 😊");
+          return;
+        }
+        
+		//응답을 문자열(text)로 받고 직접 파싱하는 경우(dataType: "text")
+        $.ajax({
+        	  url: "postJSON-orderServer.jsp",
+        	  type: "POST",
+        	  dataType: "text",
+        	  data: { name: name, phone: phone },
+        	  success: function (serverData) {
+        	    // 서버 원문 문자열 그대로
+        	    alert("Server에서 받은 내용 : \n" + serverData);
+
+        	    var JSONData;
+        	    try {
+        	      JSONData = $.parseJSON(serverData);
+        	    } catch (e) {
+        	      alert("JSON 파싱 오류가 발생했어 ㅠㅠ\n" + e);
+        	      return;
+        	    }
+
+        	    alert(
+        	      "JSONData : \n" +
+        	      "이름  : " + (JSONData.name || "") + "\n" +
+        	      "전화 : " + (JSONData.phone || "") + "\n" +
+        	      "주소 : " + (JSONData.address || "")
+        	    );
+
+        	    $("#address").val(
+        	      "이름  : " + (JSONData.name || "") + "\n" +
+        	      "전화 : " + (JSONData.phone || "") + "\n" +
+        	      "주소 : " + (JSONData.address || "")
+        	    );
+        	  },
+        	  error: function (request, status, error) {
+        	    alert("에러 발생 : " + request.status + "\n" + (error || ""));
+        	  }
+        	});
+
+			//응답을 JSON으로 받는 경우 (dataType: "json")
+//         $.ajax({
+//         	  url: "postJSON-orderServer.jsp",
+//         	  type: "POST",
+//         	  dataType: "json",
+//         	  data: { name: name, phone: phone },
+//         	  success: function (serverData) {
+
+//         	    var msg =
+//         	      "Server에서 받은 내용 : \n" +
+//         	      "이름  : " + (serverData.name || "") + "\n" +
+//         	      "전화 : " + (serverData.phone || "") + "\n" +
+//         	      "주소 : " + (serverData.address || "");
+//         	    alert(msg);
+
+//         	    var JSONData = serverData;
+//         	    var msg2 =
+//         	      "JSONData : \n" +
+//         	      "이름  : " + (JSONData.name || "") + "\n" +
+//         	      "전화 : " + (JSONData.phone || "") + "\n" +
+//         	      "주소 : " + (JSONData.address || "");
+//         	    alert(msg2);
+
+//         	    $("#address").val(
+//         	      "이름  : " + (JSONData.name || "") + "\n" +
+//         	      "전화 : " + (JSONData.phone || "") + "\n" +
+//         	      "주소 : " + (JSONData.address || "")
+//         	    );
+//         	  },
+//         	  error: function (request, status, error) {
+//         	    alert("에러 발생 : " + request.status + "\n" + (error || ""));
+//         	  }
+//         	});
+
+        });
+      });
+
+      // 엔터로 제출 방지 (UX)
+      $("#orderForm").on("submit", function(e){
+        e.preventDefault();
+        $("#btnSend").click();
+      });
+
+  </script>
+</head>
+
+<body>
+  <h2>06jQueryAjaxJSON-orderClient</h2>
+
+  <form id="orderForm">
+    <div class="row">
+      <label for="name">이름</label>
+      <input type="text" id="name" name="name" placeholder="♥이름 입력♥">
+    </div>
+    <div class="row">
+      <label for="phone">전화</label>
+      <input type="text" id="phone" name="phone" placeholder="♥번호 입력♥">
+    </div>
+    <div class="row">
+      <button id="btnSend" class="btn" type="button">서버로 전송 (POST)</button>
+    </div>
+    <div class="row">
+      <label for="address">결과</label><br/>
+      <textarea id="address" placeholder="★★띠용떼용 서버 응답(JSON)파싱 결과★★" readonly></textarea>
+    </div>
+  </form>
+</body>
+</html>

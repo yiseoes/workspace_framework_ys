@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 1. PropertyPlaceholderConfigurer로 properties 파일 로딩 -->
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <!-- 오타 수정: .prpperties → .properties -->
+        <property name="location" value="config/userservice02.properties"/>
+    </bean>
+
+    <!-- 2. User Bean 정의 : userservice02.properties 값 세터 인젝션 -->
+    <bean id="user08" class="spring.service.domain.User">
+        <property name="userId" value="${user.userId}"/>
+        <property name="password" value="${user.password}"/>
+        <property name="age" value="${user.age}"/>
+    </bean>
+
+</beans>

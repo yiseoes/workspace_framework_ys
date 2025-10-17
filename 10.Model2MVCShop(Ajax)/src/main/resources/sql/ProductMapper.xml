@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProductMapper">
+ 	
+	<!-- ResultMap : 도메인 Product의 필드명과 정확히 매핑 -->
+	<resultMap id="productSelectMap" type="product">
+		<id     property="prodNo"         column="prod_no"         jdbcType="NUMERIC"/>
+		<result property="prodName"       column="prod_name"       jdbcType="VARCHAR"/>
+		<result property="prodDetail"     column="prod_detail"     jdbcType="VARCHAR"/>
+		<!-- 화면에 YYYY-MM-DD 로 내려줄 별칭 manufacture_day 를 manufactureDay 필드에 매핑 -->
+		<result property="manufactureDay" column="manufacture_day" jdbcType="VARCHAR"/>
+		<result property="price"          column="price"           jdbcType="NUMERIC"/>
+		<result property="imageFile"      column="image_file"      jdbcType="VARCHAR"/>
+		<result property="regDate"        column="reg_date"        jdbcType="DATE"/>
+		<result property="proTranCode"    column="pro_tran_code"   jdbcType="VARCHAR"/>  
+	</resultMap>
+	
+
+		<!-- ALTER TABLE product MODIFY pro_tran_code DEFAULT '판매중';  ***'판매중'이 기본값 셋팅 상태-->
+		<!-- SQL : INSERT (화면 YYYY-MM-DD → DB YYYYMMDD, pro_tran_code 기본값 'SALE') -->
+		<insert id="addProduct" parameterType="product">
+		  INSERT INTO product (
+		    prod_no, prod_name, prod_detail, manufacture_day, price, image_file, reg_date
+		  ) VALUES (
+		    seq_product_prod_no.NEXTVAL,
+		    #{prodName},
+		    #{prodDetail},
+		    SUBSTR(REPLACE(#{manufactureDay}, '-', ''), 1, 8),
+		    #{price},
+		    NULLIF(#{imageFile}, ''),
+		    SYSDATE
+		  )
+		</insert>
+
+		<!-- SQL : SELECT ONE (DB 8자리 → 화면 YYYY-MM-DD, pro_tran_code NULL → SALE) -->
+		<select id="getProduct" parameterType="int" resultMap="productSelectMap">
+			SELECT
+				p.prod_no ,
+				p.prod_name ,
+				p.prod_detail ,
+				/* LENGTH=8 일 때만 YYYY-MM-DD 로 포맷, 아니면 원문 */
+				DECODE( LENGTH(NVL(p.manufacture_day,'')),
+								8, SUBSTR(p.manufacture_day,1,4) || '-' || SUBSTR(p.manufacture_day,5,2) || '-' || SUBSTR(p.manufacture_day,7,2),
+								p.manufacture_day ) 		AS manufacture_day ,
+				p.price ,
+				p.image_file ,
+				p.reg_date ,
+				DECODE(p.pro_tran_code, NULL, '판매중', p.pro_tran_code) AS pro_tran_code
+			FROM product p
+			WHERE p.prod_no = #{value}
+		</select>
+
+<!-- 		<update id="updateProduct" parameterType="product"> -->
+<!-- 		  UPDATE product -->
+<!-- 		  SET -->
+<!-- 		    prod_name       = #{prodName}, -->
+<!-- 		    prod_detail     = #{prodDetail}, -->
+<!-- 		    manufacture_day = NVL( -->
+<!-- 		                        SUBSTR(REPLACE(#{manufactureDay}, '-', ''), 1, 8), -->
+<!-- 		                        manufacture_day -->
+<!-- 		                      ), -->
+<!-- 		    price           = #{price}, -->
+<!-- 		    image_file      = NVL( -->
+<!-- 		                        NULLIF(#{imageFile}, ''), -->
+<!-- 		                        image_file -->
+<!-- 		                      ) -->
+<!-- 		  WHERE prod_no = #{prodNo} -->
+<!-- 		</update> -->
+
+		<update id="updateProduct" parameterType="product">
+		  UPDATE product
+		  SET
+		    prod_name       = #{prodName},
+		    prod_detail     = #{prodDetail},
+		    manufacture_day = NVL(SUBSTR(REPLACE(#{manufactureDay}, '-', ''), 1, 8), manufacture_day),
+		    price           = #{price}
+		    <if test="imageFile != null and imageFile != ''">
+		      , image_file = #{imageFile, jdbcType=VARCHAR}
+		    </if>
+		  WHERE prod_no = #{prodNo}
+		</update>
+	
+		<!-- 판매중 -> 판매완료 (결제확정 시) -->
+		<update id="updateProTranCodeToSold" parameterType="int">
+		  UPDATE product
+		     SET pro_tran_code = '판매완료'
+		   WHERE prod_no = #{value}
+		     AND NVL(pro_tran_code, '판매중') = '판매중'
+		</update>
+		
+		<!-- 판매완료 -> 판매중 (취소/환불 시) -->
+		<update id="updateProTranCodeToSale" parameterType="int">
+		  UPDATE product
+		     SET pro_tran_code = '판매중'
+		   WHERE prod_no = #{value}
+		     AND pro_tran_code = '판매완료'
+		</update>
+		
+					  <!-- 일단 이거 추가함 상태코드 -->
+		<update id="updateProTranCode" parameterType="map">
+		  UPDATE product
+		     SET pro_tran_code = #{proTranCode}
+		   WHERE prod_no = #{prodNo}
+		</update>
+	
+		 
+	<!-- SQL : SELECT LIST (투차 페이징 + 검색, 날짜 포맷/상태 보정 동일 적용) -->
+	<select id="getProductList" parameterType="search" resultMap="productSelectMap">
+		SELECT *
+		FROM (
+			SELECT inner_table.* , ROWNUM AS row_seq
+			FROM (
+				SELECT
+					p.prod_no ,
+					p.prod_name ,
+					p.prod_detail ,
+					DECODE( LENGTH(NVL(p.manufacture_day,'')),
+									8, SUBSTR(p.manufacture_day,1,4) || '-' || SUBSTR(p.manufacture_day,5,2) || '-' || SUBSTR(p.manufacture_day,7,2),
+									p.manufacture_day ) 	AS manufacture_day ,
+					p.price ,
+					p.image_file ,
+					p.reg_date ,
+					DECODE(p.pro_tran_code, NULL, '판매중', p.pro_tran_code) AS pro_tran_code
+				FROM product p
+				<if test="searchCondition != null">
+					<where>
+						<!-- 0 = 상품명(부분일치), 1 = 가격(정확히). UserMapper 스타일 유지 -->
+						<if test="searchCondition == 0 and searchKeyword != '' ">
+							p.prod_name LIKE '%' || #{searchKeyword} || '%'
+						</if>
+						<if test="searchCondition == 1 and searchKeyword != '' ">
+							TO_CHAR(p.price) = #{searchKeyword}
+						</if>
+					</where>
+				</if>
+				ORDER BY p.reg_date DESC , p.prod_no DESC
+			) inner_table
+			WHERE ROWNUM <![CDATA[ <= ]]> #{endRowNum}
+		)
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum}
+	</select>
+
+	<!-- 위 두번째 subQuery 의  WHERE ROWNUM <![CDATA[ <= ]]> #{endRowNum} ) 는
+	     WHERE ROWNUM <= #{endRowNum} ) 의미이며, < 는 keyword 로 &lt; 를 사용해도 됨 -->
+
+	<!-- SQL : SELECT ROW COUNT (검색조건 동일) -->
+	<select id="getTotalCount" parameterType="search" resultType="int">
+		SELECT COUNT(*)
+		FROM (
+			SELECT p.prod_no
+			FROM product p
+			<if test="searchCondition != null">
+				<where>
+					<if test="searchCondition == 0 and searchKeyword != null and searchKeyword != ''">
+						p.prod_name LIKE '%' || #{searchKeyword} || '%'
+					</if>
+					<if test="searchCondition == 1 and searchKeyword != null and searchKeyword != ''">
+						  TO_CHAR(p.price) = #{searchKeyword}
+					</if>
+				</where>
+			</if>
+		) countTable
+	</select>
+	 
+	<!-- SQL : DELETE -->
+	<delete id="deleteProduct" parameterType="int">
+		DELETE FROM product
+		WHERE prod_no = #{value}
+	</delete>	
+
+</mapper>

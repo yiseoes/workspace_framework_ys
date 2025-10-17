@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ProductMapper">
+
+  <resultMap id="productSelectMap" type="product">
+    <id     property="prodNo"         column="prod_no"         jdbcType="NUMERIC"/>
+    <result property="prodName"       column="prod_name"       jdbcType="VARCHAR"/>
+    <result property="prodDetail"     column="prod_detail"     jdbcType="VARCHAR"/>
+    <result property="manufactureDay" column="manufacture_day" jdbcType="VARCHAR"/>
+    <result property="price"          column="price"           jdbcType="NUMERIC"/>
+    <result property="imageFile"      column="image_file"      jdbcType="VARCHAR"/>
+    <result property="regDate"        column="reg_date"        jdbcType="DATE"/>
+  </resultMap>
+
+  <insert id="addProduct" parameterType="product">
+    INSERT INTO product (
+      prod_no, prod_name, prod_detail, manufacture_day, price, image_file, reg_date
+    ) VALUES (
+      seq_product_prod_no.NEXTVAL,
+      #{prodName,       jdbcType=VARCHAR},
+      #{prodDetail,     jdbcType=VARCHAR},
+      #{manufactureDay, jdbcType=VARCHAR},
+      #{price,          jdbcType=NUMERIC},
+      #{imageFile,      jdbcType=VARCHAR},
+      SYSDATE
+    )
+  </insert>
+
+  <select id="getProduct" parameterType="int" resultMap="productSelectMap">
+    SELECT prod_no, prod_name, prod_detail, manufacture_day, price, image_file, reg_date
+    FROM product
+    WHERE prod_no = #{_parameter, jdbcType=NUMERIC}
+  </select>
+
+  <update id="updateProduct" parameterType="product">
+    UPDATE product
+       SET prod_name       = #{prodName,       jdbcType=VARCHAR},
+           prod_detail     = #{prodDetail,     jdbcType=VARCHAR},
+           manufacture_day = #{manufactureDay, jdbcType=VARCHAR},
+           price           = #{price,          jdbcType=NUMERIC},
+           image_file      = #{imageFile,      jdbcType=VARCHAR}
+     WHERE prod_no         = #{prodNo,         jdbcType=NUMERIC}
+  </update>
+
+  <!-- Oracle ROWNUM 페이징 -->
+  <select id="getProductList" parameterType="search" resultMap="productSelectMap">
+    SELECT *
+    FROM (
+      SELECT ROWNUM rn, a.*
+      FROM (
+        SELECT prod_no, prod_name, prod_detail, manufacture_day, price, image_file, reg_date
+        FROM product
+        <where>
+          <if test="searchCondition == '0' and searchKeyword != null and searchKeyword != ''">
+            prod_name LIKE '%' || #{searchKeyword, jdbcType=VARCHAR} || '%'
+          </if>
+          <if test="searchCondition == '1' and searchKeyword != null and searchKeyword != ''">
+            TO_CHAR(price) = #{searchKeyword, jdbcType=VARCHAR}
+          </if>
+        </where>
+        ORDER BY reg_date DESC
+      ) a
+      WHERE ROWNUM &lt;= #{endRowNum,   jdbcType=NUMERIC}
+    )
+    WHERE rn &gt;= #{startRowNum, jdbcType=NUMERIC}
+  </select>
+
+  <select id="getTotalCount" parameterType="search" resultType="int">
+    SELECT COUNT(1)
+    FROM product
+    <where>
+      <if test="searchCondition == '0' and searchKeyword != null and searchKeyword != ''">
+        prod_name LIKE '%' || #{searchKeyword, jdbcType=VARCHAR} || '%'
+      </if>
+      <if test="searchCondition == '1' and searchKeyword != null and searchKeyword != ''">
+        TO_CHAR(price) = #{searchKeyword, jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
+  <delete id="deleteProduct" parameterType="int">
+    DELETE FROM product
+    WHERE prod_no = #{_parameter, jdbcType=NUMERIC}
+  </delete>
+
+</mapper>

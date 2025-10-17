@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper05">
+
+  <resultMap id="userSelectMap" type="user">
+    <result property="userId"   column="USER_ID"   jdbcType="VARCHAR" />
+    <result property="userName" column="USER_NAME" jdbcType="VARCHAR" />
+    <result property="password" column="PASSWORD"  jdbcType="VARCHAR" />
+    <result property="age"      column="AGE"       jdbcType="INTEGER" />
+    <result property="grade"    column="GRADE"     jdbcType="NUMERIC" />
+    <result property="regDate"  column="REG_DATE"  jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <insert id="addUser" parameterType="user">
+    INSERT 
+    INTO USERS ( user_id, user_name, password, age, grade, reg_date ) 
+    VALUES ( #{userId}, #{userName}, #{password}, #{age, jdbcType=INTEGER}, #{grade, jdbcType=NUMERIC}, #{regDate, jdbcType=DATE} )
+  </insert>
+  
+  <select id="getUser02" parameterType="string" resultMap="userSelectMap">
+    SELECT 
+      USER_ID, USER_NAME, PASSWORD, AGE, GRADE, REG_DATE
+    FROM USERS
+    WHERE USER_ID = #{value}
+  </select>
+
+  <select id="getUserList" resultMap="userSelectMap">
+    SELECT 
+      USER_ID, USER_NAME, PASSWORD, AGE, GRADE, REG_DATE
+    FROM USERS
+  </select>
+  
+  <delete id="removeUser" parameterType="string">
+    DELETE FROM USERS WHERE USER_ID = #{value}
+  </delete>
+
+</mapper>

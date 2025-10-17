@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProductMapper">
+
+  <resultMap id="productSelectMap" type="product">
+    <result property="prodNo"         column="prod_no"         jdbcType="NUMERIC"/>
+    <result property="prodName"       column="prod_name"       jdbcType="VARCHAR"/>
+    <result property="prodDetail"     column="prod_detail"     jdbcType="VARCHAR"/>
+    <result property="manufactureDay" column="manufacture_day" jdbcType="VARCHAR"/>
+    <result property="price"          column="price"           jdbcType="NUMERIC"/>
+    <result property="imageFile"      column="image_file"      jdbcType="VARCHAR"/>
+    <result property="regDate"        column="reg_date"        jdbcType="DATE"/>
+  </resultMap>
+
+  <!-- INSERT : 시퀀스 사용 + reg_date는 SYSDATE -->
+  <insert id="addProduct" parameterType="product">
+    INSERT INTO product
+      (prod_no, prod_name, prod_detail, manufacture_day, price, image_file, reg_date)
+    VALUES
+      (seq_product_prod_no.NEXTVAL,
+       #{prodName},
+       #{prodDetail},
+       #{manufactureDay},
+       #{price},
+       #{imageFile},
+       SYSDATE)
+  </insert>
+
+  <!-- SELECT ONE -->
+  <select id="getProduct" parameterType="int" resultMap="productSelectMap">
+    SELECT
+      prod_no, prod_name, prod_detail, manufacture_day, price, image_file, reg_date
+    FROM product
+    WHERE prod_no = #{value}
+  </select>
+
+  <!-- UPDATE : 변경 필드만 세팅 -->
+  <update id="updateProduct" parameterType="product">
+    UPDATE product
+    <set>
+      <if test="prodName != null">prod_name = #{prodName},</if>
+      <if test="prodDetail != null">prod_detail = #{prodDetail},</if>
+      <if test="manufactureDay != null">manufacture_day = #{manufactureDay},</if>
+      <if test="price != 0">price = #{price},</if>
+      <if test="imageFile != null">image_file = #{imageFile},</if>
+    </set>
+    WHERE prod_no = #{prodNo}
+  </update>
+
+  <!-- LIST : 검색 + 페이징(Search: searchCondition, searchKeyword, startRowNum, endRowNum) -->
+  <select id="getProductList" parameterType="search" resultMap="productSelectMap">
+    SELECT *
+    FROM (
+      SELECT inner_table.*, ROWNUM AS row_seq
+      FROM (
+        SELECT
+          prod_no, prod_name, prod_detail, manufacture_day, price, image_file, reg_date
+        FROM product
+        <where>
+			<!-- getProductList 조건부 -->
+			<if test="searchCondition != null and searchCondition == '0' and searchKeyword != null and searchKeyword != ''">
+			  prod_name LIKE '%' || #{searchKeyword} || '%'
+			</if>
+			<if test="searchCondition != null and searchCondition == '1' and searchKeyword != null and searchKeyword != ''">
+			  prod_detail LIKE '%' || #{searchKeyword} || '%'
+			</if> <!-- getTotalCount 조건부도 동일하게 '0' / '1' 문자열 비교 -->
+        </where>
+        ORDER BY prod_no DESC
+      ) inner_table
+      WHERE ROWNUM <![CDATA[<=]]> #{endRowNum}
+    )
+    WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum}
+  </select>
+
+  <!-- TOTAL COUNT -->
+	<select id="getTotalCount" parameterType="search" resultType="int">
+	  SELECT COUNT(*)
+	  FROM product
+	  <where>
+	    <if test="searchCondition != null and searchCondition == '0' and searchKeyword != null and searchKeyword != ''">
+	      prod_name LIKE '%' || #{searchKeyword} || '%'
+	    </if>
+	    <if test="searchCondition != null and searchCondition == '1' and searchKeyword != null and searchKeyword != ''">
+	      prod_detail LIKE '%' || #{searchKeyword} || '%'
+	    </if>
+	  </where>
+	</select>
+	
+	<!-- 참조 카운트 -->
+	<select id="countRefByProduct" parameterType="int" resultType="int">
+	  SELECT COUNT(*) FROM transaction WHERE prod_no = #{value}
+	</select>
+	
+	<!-- 물리 삭제 -->
+	<delete id="deleteProduct" parameterType="int">
+	  DELETE FROM product WHERE prod_no = #{value}
+	</delete>
+	
+
+</mapper>

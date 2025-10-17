@@ -1,0 +1,222 @@
+/* === 상세 페이지 레이아웃 === */
+.detail-content {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 40px; 
+    padding: 25px 0;
+    border-top: 2px solid #333;
+}
+
+/* === 왼쪽: 이미지 영역 === */
+.detail-image-box {
+    flex: 1; 
+    min-width: 300px;
+    max-width: 450px; 
+}
+
+.detail-image-box .main-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1; 
+    object-fit: cover; 
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+/* === 오른쪽: 정보 영역 === */
+.detail-info-box {
+    flex: 1;
+    min-width: 300px;
+}
+
+/* ================================================= */
+/* ✨ 새로운 테이블 스타일 (훨씬 간단!) ✨       */
+/* ================================================= */
+.detail-table {
+    width: 100%;
+    border-collapse: collapse; /* 선 사이의 간격을 없애줌 */
+}
+
+.detail-table th, 
+.detail-table td {
+    padding: 16px 0; /* 위아래 여백 */
+    border-bottom: 1px solid #f0f0f0; /* 각 줄 아래에 옅은 선 추가 */
+    vertical-align: middle; /* <<-- 이것이 바로 정렬의 핵심! 무조건 가운데 정렬! */
+}
+
+/* 왼쪽 항목(라벨) 스타일 */
+.detail-table th {
+    width: 130px; /* 너비 고정 */
+    text-align: left; /* 왼쪽 정렬 */
+    font-weight: 600;
+    color: #444;
+    font-size: 15px;
+}
+
+/* 오른쪽 내용(값) 스타일 */
+.detail-table td {
+    color: #333;
+    font-size: 15px;
+}
+
+/* 상품명과 가격은 특별히 더 예쁘게! */
+.product-name-td {
+    font-size: 24px !important; /* !important로 다른 스타일 덮어쓰기 */
+    font-weight: 600;
+}
+
+.product-price-td {
+    font-size: 22px !important;
+    font-weight: bold;
+    color: #d9534f;
+}
+
+/* 구매하기 버튼은 특별히 디자인 */
+.button-group .btn-purchase {
+    background-color: #5cb85c;
+    color: white;
+}
+.button-group .btn-purchase:hover {
+    background-color: #4cae4c;
+}
+
+
+
+/* ================================================= */
+/* ✨ 눈이 편안한 선명 파스텔 버튼 (v3) ✨        */
+/* ================================================= */
+
+/* --- 기본 버튼 스타일 (공통) --- */
+
+/* 공통 버튼 베이스: a/버튼 둘 다 동일하게 적용 */
+.button-group a,
+.button-group button {
+  display: inline-block;      /* a 태그도 버튼처럼 */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  line-height: 1;             /* 높이 균일 */
+  vertical-align: middle;
+  text-decoration: none;      /* 링크 밑줄 제거 */
+}
+
+/* 링크의 기본/방문 상태 색상을 흰색으로 고정 */
+.button-group a:link,
+.button-group a:visited {
+  color: #fff;
+}
+
+/* 주요/보조 버튼 컬러 (a/버튼 공통) */
+.btn-primary { background-color: #F08080; color: #fff; }
+.btn-primary:hover { background-color: #CD5C5C; }
+
+.btn-secondary { background-color: #87CEEB; color: #fff; }
+.btn-secondary:hover { background-color: #6495ED; }
+
+/* 비활성 버튼 가독성(이미 button disabled 쓰고 있으니 보정만) */
+.button-group button[disabled] {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+
+
+/* ================================================= */
+/* ✨ 구매(Purchase) 모듈 공통 스타일 ✨           */
+/* ================================================= */
+
+/* --- 구매하기 페이지 상품 정보 박스 --- */
+.purchase-prod-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border-top: 2px solid #333;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 20px;
+  background-color: #f8f9fa;
+}
+
+.purchase-prod-info img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.purchase-prod-info .prod-details {
+  font-size: 16px;
+  line-height: 1.6;
+}
+.purchase-prod-info .prod-details .prod-name {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.purchase-prod-info .prod-details .prod-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #d9534f;
+}
+
+
+/* --- 상세 보기 테이블 (getPurchase) --- */
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 2px solid #333;
+}
+.detail-table th, 
+.detail-table td {
+    padding: 16px 8px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+}
+.detail-table th {
+    width: 150px;
+    text-align: left;
+    font-weight: 600;
+    color: #444;
+    background-color: #f8f9fa;
+}
+.detail-table .code-emphasis {
+    font-weight: bold;
+    color: #0056b3;
+}
+
+
+/* --- 목록 테이블 (listPurchase) --- */
+.list-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 2px solid #333;
+    font-size: 15px;
+}
+.list-table thead th {
+    background-color: #f8f9fa;
+    padding: 14px 8px;
+    border-bottom: 1px solid #ddd;
+    font-weight: 600;
+    text-align: center;
+}
+.list-table tbody td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: center;
+    vertical-align: middle;
+}
+.list-table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+.list-table .prod-name-link { /* 상품명은 왼쪽 정렬 */
+    text-align: left;
+}
+.list-table a {
+    color: #0056b3;
+    text-decoration: underline;
+}

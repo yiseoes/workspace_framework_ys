@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper10">
+
+  <resultMap id="userSelectMap" type="user">
+    <result property="userId"   column="USER_ID"   jdbcType="VARCHAR" />
+    <result property="userName" column="USER_NAME" jdbcType="VARCHAR" />
+    <result property="password" column="PASSWORD"  jdbcType="VARCHAR" />
+    <result property="age"      column="AGE"       jdbcType="INTEGER" />
+    <result property="grade"    column="GRADE"     jdbcType="NUMERIC" />
+    <result property="regDate"  column="REG_DATE"  jdbcType="DATE" />
+  </resultMap>
+  
+  
+  <insert id="addUser" parameterType="user">
+    INSERT 
+    INTO USERS ( user_id, user_name, password
+    <if test="age != null"> , age </if>
+    <if test="grade != 0"> , grade </if>
+    , reg_date )
+    VALUES ( #{userId}, #{userName}, #{password}
+    <if test="age != null"> , #{age, jdbcType=INTEGER} </if>
+    <if test="grade != 0"> , #{grade} </if>
+    , SYSDATE )
+  </insert>
+  
+  <select id="getUser" parameterType="string" resultMap="userSelectMap">
+    SELECT USER_ID, USER_NAME, PASSWORD, AGE, GRADE, REG_DATE
+    FROM USERS
+    WHERE USER_ID = #{value}
+  </select>
+  
+  <update id="updateUser" parameterType="user">
+    UPDATE USERS
+    <set>
+      <if test="userName != null"> user_name = #{userName}, </if>
+      <if test="grade != 0"> grade = #{grade}, </if>
+    </set>
+    WHERE user_id = #{userId}
+  </update>
+  
+  <delete id="removeUser" parameterType="string">
+    DELETE FROM USERS WHERE USER_ID = #{value}
+  </delete>
+  
+  
+  <select id="getUserList" parameterType="search" resultMap="userSelectMap">
+    SELECT USER_ID, USER_NAME, PASSWORD, AGE, GRADE, REG_DATE
+    FROM USERS
+    <where>
+      <choose>
+        <when test="searchCondition == 'userId' and userId != null and userId.size() > 0">
+          user_id IN
+          <foreach collection="userId" item="id" open="(" separator="," close=")">
+            #{id}
+          </foreach>
+        </when>
+        <when test="searchCondition == 'userName' and userName != null and userName.length > 0">
+          user_name IN
+          <foreach collection="userName" item="name" open="(" separator="," close=")">
+            #{name, jdbcType=VARCHAR}
+          </foreach>
+        </when>
+        </choose>
+    </where>
+    ORDER BY USER_ID
+  </select>
+
+</mapper>

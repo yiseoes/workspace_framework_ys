@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>07jQueryAjaxETC-orderClient</title>
+
+  <!-- jQuery 2.1.4 -->
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+  <style>
+    body { font-family: Arial, "맑은 고딕", sans-serif; margin: 24px; }
+    .row { margin-bottom: 12px; }
+    label { display:inline-block; width:80px; }
+    input[type="text"] { width: 240px; padding: 6px; }
+    textarea { width: 332px; height: 140px; padding: 8px; }
+    .btn { padding: 8px 14px; cursor: pointer; margin-right: 8px; margin-bottom: 8px; }
+    .group { margin: 6px 0 14px; }
+  </style>
+
+  <script type="text/javascript">
+    // ===== 공통 유틸 =====
+    var URL = "postJSON-orderServer.jsp"; // GET/POST 모두 JSON 문자열(or JSON) 응답한다고 가정
+
+    function buildDisplayValue(obj){
+      return "이름  : " + (obj.name    || "") + "\n"
+           + "전화 : " + (obj.phone   || "") + "\n"
+           + "주소 : " + (obj.address || "");
+    }
+
+    function toObjectFromText(serverText){
+      // 서버가 순수 JSON 문자열을 보낸다는 전제
+      try {
+        return $.parseJSON(serverText);
+      } catch(e){
+        alert("JSON 파싱 오류가 발생했어 ㅠㅠ\n" + e);
+        return null;
+      }
+    }
+
+    function fillResult(obj){
+      var displayValue = buildDisplayValue(obj);
+      $("#address").val(displayValue);
+    }
+
+    $(function(){
+
+      $("#orderForm").on("submit", function(e){ e.preventDefault(); });
+      $("#orderForm")[0].reset();
+
+      // ===== 1) 옵션형 .ajax() : POST + text 수신(직접 파싱) =====
+      $("#btnAjaxPostText").on("click", function(){
+        var name  = $.trim($("#name").val());
+        var phone = $.trim($("#phone").val());
+        if(!name || !phone){ alert("이름/전화 입력해줘 😊"); return; }
+
+        $.ajax({
+          url: URL,
+          type: "POST",
+          dataType: "text",                  // 문자열 수신
+          data: { name: name, phone: phone },
+          success: function(serverText){
+            // ── 중간 알럿 1 : 서버 원문 문자열 ──
+            alert("Server에서 받은 내용 : \n" + serverText);
+
+            var JSONData = toObjectFromText(serverText);
+            if(!JSONData) return;
+
+            // ── 중간 알럿 2 : 파싱된 JSON 필드 ──
+            alert(
+              "JSONData : \n"
+              + "이름  : " + (JSONData.name || "") + "\n"
+              + "전화 : " + (JSONData.phone || "") + "\n"
+              + "주소 : " + (JSONData.address || "")
+            );
+
+            // ── 결과창 표시 ──
+            fillResult(JSONData);
+          },
+          error: function(req, status, err){
+            alert("에러 발생 : " + req.status + "\n" + (err || ""));
+          }
+        });
+      });
+
+   // [2) 옵션형 .ajax() : POST + json 수신(자동 파싱)]
+      $("#btnAjaxPostJson").on("click", function(){
+        var name  = $.trim($("#name").val());
+        var phone = $.trim($("#phone").val()); // ← 괄호 하나 제거
+        if(!name || !phone){ alert("이름/전화 입력해줘 😊"); return; }
+
+        $.ajax({
+          url: URL,
+          type: "POST",
+          dataType: "json",
+          data: { name: name, phone: phone },
+          success: function(JSONData){
+            alert(
+              "Server에서 받은 내용(JSON) : \n"
+              + "이름  : " + (JSONData.name || "") + "\n"
+              + "전화 : " + (JSONData.phone || "") + "\n"
+              + "주소 : " + (JSONData.address || "")
+            );
+            alert(
+              "JSONData : \n"
+              + "이름  : " + (JSONData.name || "") + "\n"
+              + "전화 : " + (JSONData.phone || "") + "\n"
+              + "주소 : " + (JSONData.address || "")
+            );
+            fillResult(JSONData);
+          },
+          error: function(req, status, err){
+            alert("에러 발생 : " + req.status + "\n" + (err || ""));
+          }
+        });
+      });
+
+
+      // ===== 3) 숏핸드 $.get() : GET + text 수신(직접 파싱) =====
+      $("#btnGetText").on("click", function(){
+        var name  = $.trim($("#name").val());
+        var phone = $.trim($("#phone").val());
+        if(!name || !phone){ alert("이름/전화 입력해줘 😊"); return; }
+
+        $.get(URL, { name: name, phone: phone }, function(serverText){
+          // ── 중간 알럿 1 ──
+          alert("Server에서 받은 내용 : \n" + serverText);
+
+          var JSONData = toObjectFromText(serverText);
+          if(!JSONData) return;
+
+          // ── 중간 알럿 2 ──
+          alert(
+            "JSONData : \n"
+            + "이름  : " + (JSONData.name || "") + "\n"
+            + "전화 : " + (JSONData.phone || "") + "\n"
+            + "주소 : " + (JSONData.address || "")
+          );
+
+          fillResult(JSONData);
+        }, "text")
+        .fail(function(req, status, err){
+          alert("에러 발생 : " + req.status + "\n" + (err || ""));
+        });
+      });
+
+      // ===== 4) 숏핸드 $.post() : POST + json 수신(자동 파싱 지정) =====
+      $("#btnPostJson").on("click", function(){
+        var name  = $.trim($("#name").val());
+        var phone = $.trim($("#phone").val());
+        if(!name || !phone){ alert("이름/전화 입력해줘 😊"); return; }
+
+        $.post(URL, { name: name, phone: phone }, function(JSONData){
+          // ── 중간 알럿 1 ──
+          alert(
+            "Server에서 받은 내용(JSON) : \n"
+            + "이름  : " + (JSONData.name || "") + "\n"
+            + "전화 : " + (JSONData.phone || "") + "\n"
+            + "주소 : " + (JSONData.address || "")
+          );
+
+          // ── 중간 알럿 2 ──
+          alert(
+            "JSONData : \n"
+            + "이름  : " + (JSONData.name || "") + "\n"
+            + "전화 : " + (JSONData.phone || "") + "\n"
+            + "주소 : " + (JSONData.address || "")
+          );
+
+          fillResult(JSONData);
+        }, "json")
+        .fail(function(req, status, err){
+          alert("에러 발생 : " + req.status + "\n" + (err || ""));
+        });
+      });
+
+      // ===== 5) 숏핸드 $.getJSON() : GET + json 수신 =====
+      $("#btnGetJSON").on("click", function(){
+        var name  = $.trim($("#name").val());
+        var phone = $.trim($("#phone").val());
+        if(!name || !phone){ alert("이름/전화 입력해줘 😊"); return; }
+
+        $.getJSON(URL, { name: name, phone: phone }, function(JSONData){
+          // ── 중간 알럿 1 ──
+          alert(
+            "Server에서 받은 내용(JSON) : \n"
+            + "이름  : " + (JSONData.name || "") + "\n"
+            + "전화 : " + (JSONData.phone || "") + "\n"
+            + "주소 : " + (JSONData.address || "")
+          );
+
+          // ── 중간 알럿 2 ──
+          alert(
+            "JSONData : \n"
+            + "이름  : " + (JSONData.name || "") + "\n"
+            + "전화 : " + (JSONData.phone || "") + "\n"
+            + "주소 : " + (JSONData.address || "")
+          );
+
+          fillResult(JSONData);
+        })
+        .fail(function(req, status, err){
+          alert("에러 발생 : " + req.status + "\n" + (err || ""));
+        });
+      });
+
+    });
+  </script>
+</head>
+
+<body>
+  <h2>07jQueryAjaxETC-orderClient</h2>
+
+  <form id="orderForm">
+    <div class="row">
+      <label for="name">이름</label>
+      <input type="text" id="name" name="name" placeholder="♥이름 입력♥">
+    </div>
+    <div class="row">
+      <label for="phone">전화</label>
+      <input type="text" id="phone" name="phone" placeholder="♥번호 입력♥">
+    </div>
+
+    <div class="group">
+      <strong>.ajax(options)</strong><br/>
+      <button id="btnAjaxPostText" class="btn" type="button">POST (text 수신)</button>
+      <button id="btnAjaxPostJson" class="btn" type="button">POST (JSON 수신)</button>
+    </div>
+
+    <div class="group">
+      <strong>Shorthand</strong><br/>
+      <button id="btnGetText"  class="btn" type="button">$.get (text 수신)</button>
+      <button id="btnPostJson" class="btn" type="button">$.post (JSON 수신)</button>
+      <button id="btnGetJSON"  class="btn" type="button">$.getJSON (JSON 수신)</button>
+    </div>
+
+    <div class="row">
+      <label for="address">결과</label><br/>
+      <textarea id="address" placeholder="★서버 응답 파싱 결과 출력★" readonly></textarea>
+    </div>
+  </form>
+</body>
+</html>

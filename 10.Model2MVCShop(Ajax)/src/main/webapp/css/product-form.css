@@ -1,0 +1,220 @@
+/* === 기본 폰트 및 배경 설정 (기존 admin.css와 겹치면 이 부분은 생략 가능) === */
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		"Helvetica Neue", Arial, sans-serif;
+	background-color: #fff;
+	color: #333;
+	margin: 0;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+/* === 전체 레이아웃 (listProduct와 동일) === */
+.prod-wrap {
+	max-width: 1200px;
+	margin: 20px auto;
+	padding: 8px 20px;
+}
+
+.page-title {
+	font-size: 24px;
+	font-weight: 600;
+	margin-bottom: 20px;
+	color: #111;
+}
+
+/* === 폼 컨테이너 스타일 === */
+.form-container {
+	border-top: 2px solid #333;
+	padding-top: 10px;
+}
+
+/* === 폼의 각 행 스타일 === */
+.form-row {
+	display: flex;
+	align-items: flex-start; /* 라벨과 인풋 높이가 다를 경우를 대비 */
+	padding: 15px 0;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.form-row .label-col {
+	width: 150px; /* 라벨 너비 고정 */
+	font-weight: 600;
+	padding-top: 8px; /* input 높이와 수직 정렬을 맞추기 위함 */
+	font-size: 15px;
+	color: #444;
+}
+
+.form-row .input-col {
+	flex: 1; /* 나머지 공간을 모두 차지 */
+	display: flex;
+	flex-direction: column; /* 요소들을 세로로 쌓음 */
+}
+
+/* === 입력 필드(input, textarea) 공통 스타일 === */
+.form-row input[type="text"], .form-row textarea {
+	width: 100%;
+	max-width: 500px; /* 너무 길어지지 않게 최대 너비 설정 */
+	height: 38px;
+	border: 1px solid #ddd;
+	padding: 0 12px;
+	border-radius: 4px;
+	font-size: 14px;
+	box-sizing: border-box; /* 패딩을 포함해서 너비 계산 */
+	transition: border-color 0.2s;
+}
+
+.form-row input[type="text"]:focus, .form-row textarea:focus {
+	border-color: #5c89c7;
+	outline: none;
+}
+
+.form-row textarea {
+	height: 120px;
+	padding-top: 10px;
+	resize: vertical; /* 세로로만 크기 조절 가능 */
+}
+
+/* === 가격, 제조일자 등 특별한 인풋 스타일 === */
+.form-row .input-with-unit {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.form-row .input-with-unit input[type="text"] {
+	width: 200px;
+}
+
+.form-row .calendar-icon {
+	cursor: pointer;
+	vertical-align: middle;
+}
+
+/* === 파일 업로드 스타일 === */
+.file-upload-group .btn-file-select {
+	display: inline-block;
+	cursor: pointer;
+	padding: 8px 18px;
+	border: 1px solid #ccc;
+	background: #FFFFFF;
+	font-size: 14px;
+	border-radius: 4px;
+	transition: background-color 0.2s, border-color 0.2s;
+}
+
+.file-upload-group .btn-file-select:hover {
+	background: #f8f8f8;
+	border-color: #bbb;
+}
+
+.file-upload-group .file-name {
+	margin-left: 10px;
+	color: #666;
+	font-size: 14px;
+}
+
+.file-upload-group .image-preview {
+	margin-top: 15px;
+	display: block;
+	max-width: 200px;
+	max-height: 200px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+/* === 버튼 그룹 스타일 === */
+
+/* ================================================= */
+/* ✨ 버튼 그룹 오른쪽 정렬 ✨                   */
+/* ================================================= */
+.button-group {
+	text-align: right; /* 이 한 줄이 바로 마법의 주문! ✨ */
+	margin-top: 20px; /* 폼이랑 버튼 사이에 예쁜 간격도 살짝! */
+}
+
+.button-group button {
+	border: none;
+	color: white; /* 글자는 깔끔하게 흰색으로 통일! */
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 15px;
+	font-weight: 600;
+	transition: background-color 0.2s ease; /* 부드러운 색상 전환 */
+}
+
+.btn-primary {
+	background-color: #F08080; /* LightCoral */
+}
+
+.btn-primary:hover {
+	background-color: #CD5C5C; /* IndianRed */
+}
+
+/* --- 보조 버튼: 시원한 하늘색 💎 --- */
+.btn-secondary {
+	background-color: #87CEEB; /* SkyBlue */
+}
+
+.btn-secondary:hover {
+	background-color: #6495ED; /* CornflowerBlue */
+}
+
+/* === 필수 필드 표시 === */
+.required-mark {
+	color: #d9534f;
+	margin-left: 4px;
+}
+
+/* ================================================= */
+/* ✨ 페이징 (Pagination) 스타일 ✨                */
+/* ================================================= */
+.pagination {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 30px;
+	gap: 5px;
+}
+
+.pagination a, .pagination strong {
+	display: inline-block;
+	min-width: 32px;
+	height: 32px;
+	line-height: 30px;
+	padding: 0 5px;
+	text-align: center;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-size: 14px;
+	color: #333;
+	text-decoration: none;
+	background-color: #fff;
+}
+
+.pagination a:hover {
+	background-color: #f0f0f0;
+	border-color: #ccc;
+}
+
+.pagination strong {
+	/* 현재 페이지는 우리 시그니처 하늘색으로! */
+	background-color: #87CEEB;
+	color: white;
+	border-color: #87CEEB;
+	font-weight: bold;
+}
+
+.input-with-unit {
+	display: flex;
+	align-items: center;
+}
+
+.calendar-icon {
+	margin-left: 5px;
+	cursor: pointer;
+}

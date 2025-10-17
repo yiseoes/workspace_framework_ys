@@ -1,0 +1,21 @@
+# 컴파일된 파일들
+*.class
+bin/
+target/
+build/
+
+# 이클립스 메타데이터 (워크스페이스 설정)
+.metadata/
+RemoteSystemsTempFiles/
+
+# 각 프로젝트의 설정 (선택사항)
+*/.settings/
+*/.classpath
+*/.project
+
+# 로그
+*.log
+
+# OS 파일
+.DS_Store
+Thumbs.db

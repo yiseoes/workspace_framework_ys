@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper06">
+
+  <resultMap id="userSelectMap" type="user">
+    <result property="userId"   column="USER_ID"   jdbcType="VARCHAR" />
+    <result property="userName" column="USER_NAME" jdbcType="VARCHAR" />
+    <result property="password" column="PASSWORD"  jdbcType="VARCHAR" />
+    <result property="age"      column="AGE"       jdbcType="INTEGER" />
+    <result property="grade"    column="GRADE"     jdbcType="NUMERIC" />
+    <result property="regDate"  column="REG_DATE"  jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  
+  <select id="getUserList01" parameterType="user" resultMap="userSelectMap">
+    SELECT 
+      USER_ID, USER_NAME, PASSWORD, AGE, GRADE, REG_DATE
+    FROM USERS
+    <where>
+      <if test="userName != null">
+        user_name = #{userName}
+      </if>
+      <if test="age != null">
+        AND age = #{age}
+      </if>
+    </where>
+  </select>
+
+
+  <insert id="addUser" parameterType="user">
+    INSERT 
+    INTO USERS ( user_id, user_name, password
+    <if test="age != null"> , age </if>
+    <if test="grade != 0"> , grade </if>
+    , reg_date )
+    VALUES ( #{userId}, #{userName}, #{password}
+    <if test="age != null"> , #{age} </if>
+    <if test="grade != 0"> , #{grade} </if>
+    , SYSDATE )
+  </insert>
+  
+
+  <select id="getUserList02" parameterType="user" resultMap="userSelectMap">
+    SELECT 
+      USER_ID, USER_NAME, PASSWORD, AGE, GRADE, REG_DATE
+    FROM USERS
+    <where>
+      REG_DATE IS NULL
+      
+      <if test="userId != null">
+        AND user_id = #{userId}
+      </if>
+      <if test="age != null">
+        AND (age = #{age} OR age IS NULL)
+      </if>
+      <if test="grade != 0">
+        AND (grade = #{grade} OR grade IS NULL)
+      </if>
+    </where>
+    
+    ORDER BY USER_ID DESC
+  </select>
+  
+    <!--
+  <select id="getUserList02" parameterType="user" resultMap="userSelectMap">
+    SELECT 
+      USER_ID, USER_NAME, PASSWORD, AGE, GRADE, REG_DATE
+    FROM USERS
+    <where>
+      <if test="userId != null">
+        user_id = #{userId}
+      </if>
+      <if test="age != null">
+        AND age = #{age}
+      </if>
+      <if test="grade != 0">
+        AND grade = #{grade}
+      </if>
+    </where>
+  </select>
+     -->
+  
+    <!--
+  <select id="getUserList02" parameterType="user" resultMap="userSelectMap">
+    SELECT 
+      USER_ID, USER_NAME, PASSWORD, AGE, GRADE, REG_DATE
+    FROM USERS
+    <where>
+      <if test="userId != null">
+        user_id = #{userId}
+      </if>
+      <if test="age != null">
+        AND (age = #{age} OR age IS NULL)
+      </if>
+      <if test="grade != 0">
+        AND (grade = #{grade} OR grade IS NULL)
+      </if>
+    </where>
+  </select>
+     -->
+
+  <delete id="removeUser" parameterType="string">
+    DELETE FROM USERS WHERE USER_ID = #{value}
+  </delete>
+
+</mapper>

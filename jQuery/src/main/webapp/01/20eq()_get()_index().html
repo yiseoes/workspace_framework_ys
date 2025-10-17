@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+	
+<head>
+	<meta charset="UTF-8">
+	
+	<script src="../javascript/jquery-2.1.4.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	
+	/*
+	■ tag Selector (선택자) 를 이용 다양한 사용법을 확인한다.
+ 	  - element Selector  :  $( ' element [ , element ] ' )
+ 	  - 자손 element selector  : $('element  [자손element] [ ,element  [자손element] ]')
+ 	  - 속성 element selector  : $('element[attr | attr=value]  [ , element[attr | attr=value]  ]')
+	  - 필터 selector(:사용한경우)	: $('element:expresion')
+ 	  	- Form 필터 selector       : $('element:입력양식attribute Name)
+ 	  	- 위치 필터 selector       : $('element:위치정보)
+ 	  	- 함수 필터 selector       : $('element:함수)
+	 	  
+	ㅇ Notation 정리
+		위의 모든유형..... ==> expression 으로 표기
+	ㅇ jQuery( exp1 [,exp2]) == $( exp1 [,exp2])
+	    - exp1 : notation 정리 참조
+
+	ㅇ jQuery 제공 function : www.jquery.com  : API 참조
+	 	- html() : element 내부 content GET/SET
+	 	- text() : text 속성 GET/SET
+	 	- trim() : ?
+		*/
+		
+		$( function(){
+			
+			/* [1번쨰]
+			alert("$('p').size() : " + $('p').size());
+			alert("$('p').eq(0).html() :\n\n " + $('p').eq(0).html());
+			alert("$('p').eq(1).html() :\n\n " + $('p').eq(1).html());
+			alert("$('p').eq(2).html() :\n\n " + $('p').eq(2).html());
+			
+			$('form').eq(1).css('color','red');
+			
+			//*/
+			
+			
+			/* [2번쨰]
+			
+			alert("$('p').size() : " + $('p').size());
+			alert("$('p').get(0).html() :\n\n " + $($('p').get(0)).html());
+			alert("$('p').get(1).html() :\n\n " + $($('p').get(1)).html());
+			alert("$('p').get(2).html() :\n\n " + $($('p').get(2)).html());
+			
+			$($('form').get(1)).css('color','red');
+			
+			//*/
+			
+			
+			var index = $('form').index($('form[name=test01]'));
+			alert(index);
+			alert($('form').index($('form[name=test02]')));
+			alert($('form').index($('form[name=test03]')));
+
+			
+			$($('form').get(1)).css('color','red');
+		
+			
+				
+			/* [1번쨰]
+			var value = ""
+			var i = 0;
+			
+			$('p').each(function(){
+				obj.each(function(){
+					i++ ;
+					value +=i+":"+$(this).html()+"\n"
+					alert(value);
+				});
+			
+			//*/	
+			
+			
+			/* [2번쨰]
+			
+			var value = ""
+			
+			obj.each(function(index,elem){
+				value += (index+1) +":"+ $(elem).html()+"\n"
+				//value += (index+1) +":"+ $(this).html()+"\n"
+				alert(value);
+			});
+			
+			//*/
+			
+			
+			
+			/* [3번쨰]
+			
+			var value = ""
+			
+			$.each(obj, function(index,elem){
+				//value += (index+1) +":"+ $(elem).html()+"\n"
+				//value += (index+1) +":"+ $(this).html()+"\n"
+				alert(value);
+			});
+			
+				
+			//*/
+			
+			
+			alert("$('form') :" + $('form').size());
+			alert("$('form') :" + $('form').length);
+			
+			alert("$('form') :" + $ ($('form')[0]).html());
+			alert("$('form') :" + $ ($('form')[0]).html().trim());
+			alert("$('form') :" + $ ($('form')[1]).html());
+			alert("$('form') :" + $ ($('form')[1]).html().trim());
+			
+			alert("$('form') :" + $ ($('form')[0]).text());
+			alert("$('form') :" + $ ($('form')[0]).text().trim());
+			alert("$('form') :" + $ ($('form')[1]).text());
+			alert("$('form') :" + $ ($('form')[1]).text().trim());
+			
+			
+			
+			});
+					
+		
+	</script>
+	
+</head>
+
+<body>
+
+	<h1>javascript Framework : jQuery 학습</h1>
+	<h2>사용법(?)에 익숙해 지자 </h2>
+
+	<form name="test01">
+		<p>jQuery 란 ? </p>
+	</form>
+	
+	<div>
+		<p> javascript Framework</p>
+	</div>
+	
+	<form name="test02">
+		<p>framework 이란 ?
+			<span> 확장,재사용 가능한 Lib</span>
+		</p>
+	</form>
+
+</body>
+
+</html>

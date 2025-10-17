@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper04">
+
+  <insert id="addUser01" parameterType="user">
+    INSERT 
+    INTO USERS ( user_id, user_name, password, age, grade, reg_date ) 
+    VALUES ( #{userId}, #{userName}, #{password}, #{age, jdbcType=INTEGER}, #{grade, jdbcType=NUMERIC}, SYSDATE )
+  </insert>
+  
+  <insert id="addUser02" parameterType="user">
+    INSERT 
+    INTO USERS ( user_id, user_name, password, age, grade, reg_date ) 
+    VALUES ( #{userId}, #{userName}, #{password}, #{age, jdbcType=INTEGER}, #{grade, jdbcType=NUMERIC}, SYSDATE )
+  </insert>
+  
+  <insert id="addUser03" parameterType="user">
+    INSERT 
+    INTO USERS ( user_id, user_name, password
+    <if test="age != null"> , age </if>
+    , reg_date )
+    VALUES ( #{userId}, #{userName}, #{password}
+    <if test="age != null"> , #{age} </if>
+    , SYSDATE )
+  </insert>
+  
+  <insert id="addUser04" parameterType="user">
+    INSERT 
+    INTO USERS ( user_id, user_name, password
+    <if test="age != null"> , age </if>
+    <if test="grade != 0"> , grade </if>
+    , reg_date )
+    VALUES ( #{userId}, #{userName}, #{password}
+    <if test="age != null"> , #{age} </if>
+    <if test="grade != 0"> , #{grade} </if>
+    , SYSDATE )
+  </insert>
+
+</mapper>

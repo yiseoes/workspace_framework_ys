@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+	
+<head>
+	<meta charset="UTF-8">
+	
+	<script type="text/javascript">
+	
+		//=======================================================//
+		// XMLHttpRequest Object GET
+		var request = null;
+		
+		function createRequest(){
+			try{
+				request = new XMLHttpRequest();
+				//Debug..
+				alert ("XMLHttpRequest() 로 request instancet생성완료");
+			}catch(trymicrosoft){
+				try{
+					request = new ActiveXObject("Msxml2.XMLHTTP");
+					//Debug..
+					alert ("ActiveXObject(Msxml2.XMLHTTP) 로 request instancet생성완료");
+				}catch(othermicrosoft){
+					try{
+						request =new ActiveXObject("Microsoft.XMLHTTP");
+						//Debug..
+						alert ("new ActiveXObject(Microsoft.XMLHTTP) 로 request instancet생성완료");
+					}catch(failed){
+						request = null;
+					}
+				}
+			}
+			
+			if( request == null ){
+				alert ("request객체 생성시 error 발생함.");
+			}
+		}
+		
+	
+		//phone 번호를 server로 GET 방식 전송 function    
+		function getSold(){
+			
+			createRequest();		
+			
+			//var url ="calcServerAjax.jsp"
+			var url ="calcServerAjaxAAA.jsp"
+			
+			//연결초기화 : open Method, URL, 비동기유무
+			//request GET 방식 , 해당url , 비동기로 연결할 것을 결정 : 연결초기화
+			request.open("GET",url,true);
+			request.onreadystatechange =  updatePage;
+			request.send(null);
+		}
+		
+		
+		function updatePage(){
+			
+			if(request.readyState==4){
+				if(request.status == 200){
+					
+					var value = request.responseText;
+					value = trim(value);
+					
+					alert ("===>updatePage() ="+value);
+													
+				}else{					
+					alert ("에러발생 : "+request.status+"===>"+request.statusText);
+				}
+			}
+		}
+		
+// 		function trim(str){
+// 		return str.replace(/^\s\s*/, '').replace(/\s\s*$/, ''); 
+// 		}
+
+		
+	</script>
+	
+</head>
+
+<body>
+
+<h1> 판매 보고서</h1>
+
+		<table>
+			<tr>
+				<th>판매된 상품 갯수</th>
+				<td><span id="sold">100</span></td>
+			</tr>
+			<tr>
+				<th>상품 단가</th>
+				<td><span id="price">100</span>원</td>
+			</tr>
+		</table>
+		
+		<h2>총 매출금액  :  <span id="cash">10,000원</span></h2>
+		
+		<form method="POST" action="calcServerNormal.jsp">
+			<input type="submit" value="판매보고서 다시보기(기존방식)">
+		</form>
+		
+		<form>
+		<input type="button" value="판매보고서 다시보기(ajax적용)"
+		onClick="javascript:getSold()">
+		</form>
+	
+</body>
+
+</html>
+

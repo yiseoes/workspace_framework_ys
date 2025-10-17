@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper09">
+
+  <resultMap id="userSelectMap" type="user">
+    <result property="userId"   column="USER_ID"   jdbcType="VARCHAR" />
+    <result property="userName" column="USER_NAME" jdbcType="VARCHAR" />
+    <result property="password" column="PASSWORD"  jdbcType="VARCHAR" />
+    <result property="age"      column="AGE"       jdbcType="INTEGER" />
+    <result property="grade"    column="GRADE"     jdbcType="NUMERIC" />
+    <result property="regDate"  column="REG_DATE"  jdbcType="DATE" />
+  </resultMap>
+  
+  
+  <select id="getUserList01" parameterType="search" resultMap="userSelectMap">
+    SELECT USER_ID, USER_NAME, PASSWORD, AGE, GRADE, REG_DATE
+    FROM USERS
+    <where>
+      <if test="userId != null and userId.size() > 0">
+        user_id IN
+        <foreach collection="userId" item="id" open="(" separator="," close=")">
+          #{id}
+        </foreach>
+      </if>
+    </where>
+  </select>
+
+  <select id="getUserList02" parameterType="search" resultMap="userSelectMap">
+    SELECT USER_ID, USER_NAME, PASSWORD, AGE, GRADE, REG_DATE
+    FROM USERS
+    <where>
+      <if test="userName != null and userName.length > 0">
+        user_name IN
+        <foreach collection="userName" item="name" open="(" separator="," close=")">
+          #{name, jdbcType=VARCHAR}
+        </foreach>
+      </if>
+    </where>
+  </select>
+  
+  
+  <select id="getUserList03" parameterType="search" resultMap="userSelectMap">
+    SELECT USER_ID, USER_NAME, PASSWORD, AGE, GRADE, REG_DATE
+    FROM USERS
+    <where>
+      <if test="userId != null and userId.size() > 0">
+        ( 
+        <foreach collection="userId" item="id" separator=" OR ">
+          user_id = #{id}
+        </foreach>
+        )
+      </if>
+    </where>
+  </select>
+  
+
+  <select id="getUserList04" parameterType="search" resultMap="userSelectMap">
+    SELECT USER_ID, USER_NAME, PASSWORD, AGE, GRADE, REG_DATE
+    FROM USERS
+    <where>
+      <if test="userName != null and userName.length > 0">
+        (
+        <foreach collection="userName" item="name" separator=" OR ">
+          user_name = #{name, jdbcType=VARCHAR}
+        </foreach>
+        )
+      </if>
+    </where>
+  </select>
+  
+</mapper>
