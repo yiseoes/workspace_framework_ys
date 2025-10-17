@@ -9,7 +9,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.model2.mvc.service.domain.User;
 
 /*
- * FileName : LogonCheckInterceptor.java
+ * FileName : LogonCheckInterceptor.java 
  *  - Controller 호출 전/후 처리
  *  - 로그인/권한/공개자원 허용 + 상품열람 히스토리 기록
  *  - 08/10 혼용 URL 패턴 동시 지원(점진적 리팩토링 용)
