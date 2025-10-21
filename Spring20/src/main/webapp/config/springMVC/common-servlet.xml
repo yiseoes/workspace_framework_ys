@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-		xmlns:context="http://www.springframework.org/schema/context"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation=
-				"http://www.springframework.org/schema/beans 
-				http://www.springframework.org/schema/beans/spring-beans.xsd
-				http://www.springframework.org/schema/context 
-				http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context 
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/mvc 
+           http://www.springframework.org/schema/mvc/spring-mvc.xsd">
     
    <!-- :: 공통적인 사항을 설정한 common-servlet.xml 사용. -->
     
@@ -23,16 +26,34 @@
 													expression="org.springframework.stereotype.Repository"/>
 	</context:component-scan>            
 
-                
-	 <!-- ::  Annotation 지원 HandlerMapping 선언  -->
+      <mvc:annotation-driven />
+     <!-- ::  Annotation 지원 HandlerMapping 선언  -->
 	 <!-- 
 	 	# Spring 4.X 에서 사용. 5.X에서 Deprecation 됨
 	 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
 	 	
 	 	# Spring 5.X 에서 아래의 Bean 사용
 	  -->
-	 <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
+	  
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    <!--  :: Interceptor 선언 : 로그인 유무확인.  추가 부분 -->
+<!--  <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+	 	 <property name="order" value="0"/>
+		<property name="interceptors" ref="logonCheckInterceptor"/>
+	 </bean>  -->
+
+<mvc:annotation-driven />
+
+<!-- :: Interceptor 선언 -->
+<mvc:interceptors>
+    <ref bean="logonCheckInterceptor"/>
+</mvc:interceptors>
+<bean id="logonCheckInterceptor" class="spring.common.web.LogonCheckInterceptor" />
 	 
+	 <!--  :: Interceptor 선언 : 로그인 유무확인. -->
+	<!-- <bean id="logonCheckInterceptor"	class="spring.common.web.LogonCheckInterceptor" /> -->
+	<!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
 
 	<!--  :: ViewResolver 선언 -->	
     <bean id="viewResolver"

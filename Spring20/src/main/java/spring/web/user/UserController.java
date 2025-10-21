@@ -35,7 +35,7 @@ public class UserController {
 		return "/user/logon.jsp";
 	}
 
-	// Home 이동
+	// Home 이동//
 	@RequestMapping("/home")
 	public String home(HttpSession session, Model model) {
 		System.out.println("\n:: ==> home() start....");
