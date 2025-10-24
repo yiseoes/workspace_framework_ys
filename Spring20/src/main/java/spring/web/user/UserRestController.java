@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +42,8 @@ public class UserRestController {
 		returnUser.setUserName("GET:이순신");
 		returnUser.setAge(100);
 		System.out.println(returnUser);
+		
+		//Thread.sleep(10000);
 		
 		return returnUser;
 	}
@@ -88,7 +92,7 @@ public class UserRestController {
 	}
 
 	// 2.1 Client 로 Domain Object 만 전송할 경우.
-	//http://192.168.0.29:8080/Spring20/app/userAPI/getUser
+	//http://127.0.0.1:8080/Spring20/app/userAPI/getUser
 	// @ModelAttribute("user") User user : Client 의 Form Data => User 바인딩. 
 	// @RequestBody User user : Client JSON Datga => User 바인딩
 	@RequestMapping(value="getUser" , method=RequestMethod.POST )
@@ -109,7 +113,7 @@ public class UserRestController {
 	
 	
 	// 2.1 Client 로 Domain Object + 기타 Data 를 JSON 으로 전송할 경우.
-	//http://192.168.0.29:8080/Spring20/app/userAPI/getUserMore/user01
+	//http://127.0.0.1:8080/Spring20/app/userAPI/getUserMore/user01
 	// @ModelAttribute("user") User user : Client 의 Form Data => User 바인딩. 
 	// @RequestBody User user : Client JSON Datga => User 바인딩	
 	@RequestMapping(value="getUserMore/{value}" , method=RequestMethod.POST )
@@ -150,5 +154,58 @@ public class UserRestController {
 		map.put("message","ok");
 
 		return map;
+	}
+
+	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ==> React : react-myweb01 : 추가된 부분.
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//==> 로그인 수행 : HttpSession 사용 //==> 내부적으로 cookie 사용함.
+	//http://127.0.0.1:8080/Spring20/app/userAPI/login  : POST  
+	//{"userId":"user01","password":"user01"}
+	@RequestMapping(value="login" , method=RequestMethod.POST )
+	public User login	( @RequestBody User user , HttpSession session) throws Exception{
+			System.out.println();
+			System.out.println("[ From Client Data ]");
+			
+			System.out.println(user);
+			
+			if( user.getUserId().equals("user01") && user.getPassword().equals("user01")) {
+				user.setActive(true);
+				session.setAttribute("user", user);
+			}
+			
+			System.out.println("[To Client Data]");
+			
+			System.out.println(user);
+			
+			return user;
 	}	
+	
+	//==> 로그인 확인 : HttpSession 사용 //==> 내부적으로 cookie 사용함.
+	//http://127.0.0.1:8080/Spring20/app/userAPI/checkLogin  : GET
+	@RequestMapping(value="checkLogin" , method=RequestMethod.GET )
+	public User checkLogin(HttpSession session) throws Exception{
+	
+		System.out.println("http://127.0.0.1:8080/Spring20/app/userAPI/checkLogin  : GET");
+		
+		User user = (User)session.getAttribute("user");
+		
+		System.out.println(user);
+		
+		return user;
+	}	
+	
+	//==> 로그아웃 : HttpSession 사용 //==> 내부적으로 cookie 사용함.
+	//http://127.0.0.1:8080/Spring20/app/userAPI/logout  : POST
+	@RequestMapping(value="logout" , method=RequestMethod.POST )
+	public void logout(HttpSession session) throws Exception{
+	
+	System.out.println("http://127.0.0.1:8080/Spring20/userAPI/logout  : POST");
+	
+	session.invalidate();
+	
+	}		
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+
 }
