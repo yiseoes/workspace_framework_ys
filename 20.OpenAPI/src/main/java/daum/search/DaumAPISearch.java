@@ -21,7 +21,7 @@ public class DaumAPISearch {
             URL url = new URL(daumOpenAPIURL);
             HttpURLConnection con = (HttpURLConnection)url.openConnection();
             con.setRequestMethod("GET");
-            con.setRequestProperty("Authorization", "KakaoAK cf296aed85af05aab502785a1c9d6497");
+            con.setRequestProperty("Authorization", "KakaoAK YOUR_KAKAO_REST_API_KEY");
             
             // Response Code GET
             int responseCode = con.getResponseCode();

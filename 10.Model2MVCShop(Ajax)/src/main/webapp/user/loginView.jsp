@@ -80,7 +80,7 @@
       // ===== Kakao Authorize URL (redirect_uri 동적 주입) =====
       var kakaoAuth =
         'https://kauth.kakao.com/oauth/authorize'
-        + '?client_id=' + encodeURIComponent('cf296aed85af05aab502785a1c9d6497')
+        + '?client_id=' + encodeURIComponent('YOUR_KAKAO_CLIENT_ID')
         + '&redirect_uri=' + encodeURIComponent(redirectKakao)
         + '&response_type=code'
         + '&scope=' + encodeURIComponent('profile_nickname account_email')
@@ -89,7 +89,7 @@
       // ===== Google Authorize URL (redirect_uri 동적 주입) =====
       var googleAuth =
         'https://accounts.google.com/o/oauth2/v2/auth'
-        + '?client_id=' + encodeURIComponent('516891552299-0dhkpa2dm2cls435lv832farshtb5m0h.apps.googleusercontent.com')
+        + '?client_id=' + encodeURIComponent('YOUR_GOOGLE_CLIENT_ID')
         + '&redirect_uri=' + encodeURIComponent(redirectGoogle)
         + '&response_type=code'
         + '&scope=' + encodeURIComponent('https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile')

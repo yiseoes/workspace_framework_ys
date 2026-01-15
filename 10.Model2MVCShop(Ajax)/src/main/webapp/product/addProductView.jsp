@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <c:set var="cPath" value="${pageContext.request.contextPath}" />
     <title>상품 등록</title>
+    
     <link rel="stylesheet" href="${cPath}/css/admin.css" type="text/css">
     <link rel="stylesheet" href="${cPath}/css/product-form.css?v=2" type="text/css">
     

@@ -151,7 +151,7 @@ public class UserController {
 //		headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 //		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 //		params.add("grant_type", "authorization_code");
-//		params.add("client_id", "cf296aed85af05aab502785a1c9d6497");
+//		params.add("client_id", "YOUR_KAKAO_CLIENT_ID");
 //		params.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
 //		params.add("code", code);
 //		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
@@ -192,8 +192,8 @@ public class UserController {
 //		headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 //		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 //		params.add("grant_type", "authorization_code");
-//		params.add("client_id", "319852921219-s1a5ljc9l9p4v1jngk2np8u4o0f4d5ih.apps.googleusercontent.com");
-//		params.add("client_secret", "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");
+//		params.add("client_id", "YOUR_GOOGLE_CLIENT_ID");
+//		params.add("client_secret", "YOUR_GOOGLE_CLIENT_SECRET");
 //		params.add("redirect_uri", "http://127.0.0.1:8080");
 //		params.add("code", code);
 //		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
@@ -265,7 +265,7 @@ public class UserController {
 
 	    org.springframework.util.MultiValueMap<String, String> params = new org.springframework.util.LinkedMultiValueMap<String, String>();
 	    params.add("grant_type", "authorization_code");
-	    params.add("client_id", "cf296aed85af05aab502785a1c9d6497");
+	    params.add("client_id", "YOUR_KAKAO_CLIENT_ID");
 	    params.add("redirect_uri", redirectUri);
 	    params.add("code", code);
 
@@ -375,8 +375,8 @@ public class UserController {
 
 	    org.springframework.util.MultiValueMap<String, String> params = new org.springframework.util.LinkedMultiValueMap<String, String>();
 	    params.add("grant_type", "authorization_code");
-	    params.add("client_id", "516891552299-0dhkpa2dm2cls435lv832farshtb5m0h.apps.googleusercontent.com");
-	    params.add("client_secret", "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");
+	    params.add("client_id", "YOUR_GOOGLE_CLIENT_ID");
+	    params.add("client_secret", "YOUR_GOOGLE_CLIENT_SECRET");
 	    params.add("redirect_uri", redirectUri);
 	    params.add("code", code);
 
@@ -439,7 +439,7 @@ public class UserController {
 	    String _base = _req.getScheme() + "://" + _req.getServerName() + ":" + _req.getServerPort() + _req.getContextPath();
 	    String redirectUri = _base + "/user/naver/callback";
 
-	    String clientId = "MeTokB6p_xyzzSlYR3uJ"; // 네이버 콘솔 Client ID
+	    String clientId = "YOUR_NAVER_CLIENT_ID"; // 네이버 콘솔 Client ID
 
 	    String authorize = "https://nid.naver.com/oauth2.0/authorize"
 	            + "?response_type=code"
@@ -497,8 +497,8 @@ public class UserController {
 	    System.out.println("[NAVER][토큰] 교환 요청 시작");
 
 	    String url = "https://nid.naver.com/oauth2.0/token";
-	    String clientId = "MeTokB6p_xyzzSlYR3uJ";
-	    String clientSecret = "hBCHaLnQLW";
+	    String clientId = "YOUR_NAVER_CLIENT_ID";
+	    String clientSecret = "YOUR_NAVER_CLIENT_SECRET";
 
 	    // 동적 redirect_uri
 	    javax.servlet.http.HttpServletRequest _req =
